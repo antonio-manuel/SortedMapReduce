@@ -25,8 +25,10 @@ public class SortedWordCount {
                     ) throws IOException, InterruptedException {
       StringTokenizer itr = new StringTokenizer(value.toString());
       while (itr.hasMoreTokens()) {
-        word.set(itr.nextToken());
-        context.write(word, one);
+        word.set(itr.nextToken().replaceAll("[^\\p{L}\\p{Nd}]+", "").trim().toLowerCase());
+        if(word.getLength()>0){
+        	context.write(word, one);
+        }
       }
     }
   }
