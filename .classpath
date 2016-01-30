@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="test"/>
+	<classpathentry including="**/*.java" kind="src" output="target/test-classes" path="src/test/java"/>
+	<classpathentry including="**/*.java" kind="src" path="src/main/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/antonio/Descargas/hadoop-2.3.0/share/hadoop/common/hadoop-common-2.3.0.jar"/>
-	<classpathentry kind="lib" path="/home/antonio/Descargas/hadoop-2.3.0/share/hadoop/mapreduce/hadoop-mapreduce-client-common-2.3.0.jar"/>
-	<classpathentry kind="lib" path="/home/antonio/Descargas/hadoop-2.3.0/share/hadoop/mapreduce/hadoop-mapreduce-client-core-2.3.0.jar"/>
-	<classpathentry kind="lib" path="/home/antonio/Descargas/hadoop-2.3.0/share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-2.3.0.jar"/>
-	<classpathentry kind="lib" path="/home/antonio/Descargas/mrunit-1.1.0-hadoop2.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="lib" path="src/lib/mrunit-1.1.0-hadoop2.jar"/>
+	<classpathentry kind="lib" path="src/lib/junit-4.12.jar"/>
+	<classpathentry kind="lib" path="src/lib/hadoop-common-2.3.0.jar"/>
+	<classpathentry kind="lib" path="src/lib/hadoop-mapreduce-client-common-2.3.0.jar"/>
+	<classpathentry kind="lib" path="src/lib/hadoop-mapreduce-client-core-2.3.0.jar"/>
+	<classpathentry kind="lib" path="src/lib/hadoop-mapreduce-client-jobclient-2.3.0.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
