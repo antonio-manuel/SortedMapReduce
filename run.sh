@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DOCKER_CONTAINER_HOME=/home/antonio/Docker/hadoop-cluster-docker/
+DOCKER_CONTAINER_HOME=<Container_Path>
 
 cd $DOCKER_CONTAINER_HOME
 

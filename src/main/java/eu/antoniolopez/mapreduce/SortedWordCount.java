@@ -30,6 +30,7 @@ public class SortedWordCount {
 
 		String file = FileHandler.copyFile(args[0], INPUT_FOLDER);
 		if(file!=null){
+			
 			if(FileHandler.isZip(file)){
 				Unziper.unzip(file);
 			}
@@ -45,8 +46,10 @@ public class SortedWordCount {
 			FileInputFormat.addInputPath(jobCount, new Path(INPUT_FOLDER));
 			FileOutputFormat.setOutputPath(jobCount, new Path(OUTPUT_FOLDER_COUNT));
 			boolean success = jobCount.waitForCompletion(true);
+			
 			FileSystem fs = FileSystem.get(conf);
 			fs.delete(new Path(INPUT_FOLDER), true);
+			
 			if(success){				
 				Job jobOrder = Job.getInstance(conf, "word count");
 				jobOrder.setJarByClass(SortedWordCount.class);
@@ -59,11 +62,14 @@ public class SortedWordCount {
 				FileInputFormat.addInputPath(jobOrder, new Path(OUTPUT_FOLDER_COUNT));
 				FileOutputFormat.setOutputPath(jobOrder, new Path(OUTPUT_FOLDER_SORT));
 				success = jobOrder.waitForCompletion(true);
+				
 				fs.delete(new Path(OUTPUT_FOLDER_COUNT), true);
 				System.out.println(OUTPUT_FOLDER_SORT+System.getProperty("file.separator")+OUTPUT_FILE);
+				
 				FileHandler.uploadFile(OUTPUT_FOLDER_SORT+System.getProperty("file.separator")+OUTPUT_FILE, args[1]);
 				fs.delete(new Path(OUTPUT_FOLDER_SORT), true);
 			}
+			
 			System.exit(success ? 0 : 1);			
 		}
 	}
