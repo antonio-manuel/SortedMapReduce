@@ -1,23 +1,27 @@
 package eu.antoniolopez.mapreduce.io;
 
+import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+
 public class FileHandler {
 
 	private static String ZIP_EXTENSION = "zip";
+	private static int BUFFER = 64*1024;
 	
 	private static String getfileName(String URL){
 		int position = 0;
@@ -73,16 +77,33 @@ public class FileHandler {
 		}
 		exit+=fileName;
 		try{
-			File tmp = new File(path);
-			deleteFolder(tmp);
-			tmp.mkdir();
-		    Files.createFile(Paths.get(exit));		    
+			Configuration conf = new Configuration();
+			FileSystem fs = FileSystem.get(conf);
+			fs.delete(new Path(path), true);
+			fs.mkdirs(new Path(path));
+			
+			BufferedInputStream in = new BufferedInputStream(getReader(url));
+
+			Path outFile = new Path(exit);
+			FSDataOutputStream fsdos = fs.create(outFile);
+			byte []buffer = new byte [BUFFER];
+			int bytesRead  = -1;
+			while ((bytesRead = in.read(buffer)) > 0) {
+				fsdos.write(buffer, 0, bytesRead);
+			}
+			fsdos.close();
+			in.close();
+			
+//			File tmp = new File(path);
+//			deleteFolder(tmp);
+//			tmp.mkdir();
+//		    Files.createFile(Paths.get(exit));		    
 		    
-		    ReadableByteChannel rbc = Channels.newChannel(getReader(url));
-		    FileOutputStream fos = new FileOutputStream(exit);
-		    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-		    fos.close();
-		    rbc.close();
+//		    ReadableByteChannel rbc = Channels.newChannel(getReader(url));
+//		    FileOutputStream fos = new FileOutputStream(exit);
+//		    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+//		    fos.close();
+//		    rbc.close();
 		} catch (MalformedURLException e) {
 			System.err.format("%s: no such" + " file or directory%n", url);
 			e.printStackTrace();
