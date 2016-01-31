@@ -1,13 +1,14 @@
 package eu.antoniolopez.mapreduce;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.regex.Matcher;
@@ -33,7 +34,7 @@ public class FileHandler {
 		return extension.equalsIgnoreCase(ZIP_EXTENSION);
 	}
 	
-	public static BufferedInputStream getReader(String url) throws IOException{
+	public static InputStream getReader(String url) throws IOException{
 		URL aURL = new URL(url);
 		InputStream is;
 		if(aURL.getProtocol().equals("file")){
@@ -41,8 +42,27 @@ public class FileHandler {
 		}else{
 			is = aURL.openStream();
 		}
-		return new BufferedInputStream(is);
+		return is;
 	}
+	
+	public static void deleteFolder(File file) throws IOException{
+    	if(file.isDirectory()){
+    		if(file.list().length==0){    			
+    		   file.delete();
+    		}else{
+        	   String files[] = file.list();     
+        	   for (String temp : files) {
+        	      File fileDelete = new File(file, temp);
+        	      deleteFolder(fileDelete);
+        	   }
+        	   if(file.list().length==0){
+           	     file.delete();
+        	   }
+    		}    		
+    	}else{
+    		file.delete();
+    	}
+    }
 	
 	public static String copyFile(String url, String path){
 		String fileName = getfileName(url);
@@ -52,19 +72,16 @@ public class FileHandler {
 		}
 		exit+=fileName;
 		try{
-		    Files.deleteIfExists(Paths.get(exit));
+			File tmp = new File(path);
+			deleteFolder(tmp);
+			tmp.mkdir();
 		    Files.createFile(Paths.get(exit));		    
 		    
-		    BufferedInputStream bis = getReader(url);
+		    ReadableByteChannel rbc = Channels.newChannel(getReader(url));
 		    FileOutputStream fos = new FileOutputStream(exit);
-		    BufferedOutputStream bos = new BufferedOutputStream(fos, BUFFER);
-		    int count;
-			byte data[] = new byte[BUFFER];
-		    while ((count = bis.read(data, 0, BUFFER))!= -1) {
-		    	bos.write(data, 0, count);
-			}
-		    bos.close();
-		    bis.close();
+		    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+		    fos.close();
+		    rbc.close();
 		} catch (MalformedURLException e) {
 			System.err.format("%s: no such" + " file or directory%n", url);
 			e.printStackTrace();
