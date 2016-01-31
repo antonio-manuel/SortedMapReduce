@@ -16,7 +16,7 @@ import org.apache.hadoop.fs.Path;
 
 public class Unziper {
 
-	private final static int BUFFER = 2048;
+	private final static int BUFFER = 64*1024;
 
 	public static void unzip(String fileName){
 		try {

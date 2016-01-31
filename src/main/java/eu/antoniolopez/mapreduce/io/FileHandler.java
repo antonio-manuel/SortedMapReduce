@@ -94,16 +94,6 @@ public class FileHandler {
 			fsdos.close();
 			in.close();
 			
-//			File tmp = new File(path);
-//			deleteFolder(tmp);
-//			tmp.mkdir();
-//		    Files.createFile(Paths.get(exit));		    
-		    
-//		    ReadableByteChannel rbc = Channels.newChannel(getReader(url));
-//		    FileOutputStream fos = new FileOutputStream(exit);
-//		    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-//		    fos.close();
-//		    rbc.close();
 		} catch (MalformedURLException e) {
 			System.err.format("%s: no such" + " file or directory%n", url);
 			e.printStackTrace();

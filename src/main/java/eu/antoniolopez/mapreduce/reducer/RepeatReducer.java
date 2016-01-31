@@ -13,15 +13,11 @@ public class RepeatReducer  extends Reducer<LongWritable,Text,LongWritable,Text>
     public void reduce(LongWritable key, Iterable<Text> values,
                        Context context
                        ) throws IOException, InterruptedException {
-
-      StringBuilder sb = new StringBuilder();
-      String delim = "";
+      
       for (Text val : values) {
-          sb.append(delim).append(val);
-          delim = ",";
+    	  result.set(val);
+    	  context.write(key, result);
       }
       
-      result.set(sb.toString());
-      context.write(key, result);
     }
   }
