@@ -10,17 +10,25 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class SortedWordCount {
 
-   public static void main(String[] args) throws Exception {
-    Configuration conf = new Configuration();
-    Job job = Job.getInstance(conf, "word count");
-    job.setJarByClass(SortedWordCount.class);
-    job.setMapperClass(TokenizerMapper.class);
-    job.setCombinerClass(IntSumReducer.class);
-    job.setReducerClass(IntSumReducer.class);
-    job.setOutputKeyClass(Text.class);
-    job.setOutputValueClass(IntWritable.class);
-    FileInputFormat.addInputPath(job, new Path(args[0]));
-    FileOutputFormat.setOutputPath(job, new Path(args[1]));
-    System.exit(job.waitForCompletion(true) ? 0 : 1);
-  }
+	public static void main(String[] args) throws Exception {
+
+		String file = FileHandler.copyFile(args[0], args[1]);
+		if(file!=null){
+			if(FileHandler.isZip(file)){
+				Unziper.unzip(file);
+			}
+
+			Configuration conf = new Configuration();
+			Job job = Job.getInstance(conf, "word count");
+			job.setJarByClass(SortedWordCount.class);
+			job.setMapperClass(TokenizerMapper.class);
+			job.setCombinerClass(IntSumReducer.class);
+			job.setReducerClass(IntSumReducer.class);
+			job.setOutputKeyClass(Text.class);
+			job.setOutputValueClass(IntWritable.class);
+			FileInputFormat.addInputPath(job, new Path(args[1]));
+			FileOutputFormat.setOutputPath(job, new Path(args[2]));
+			System.exit(job.waitForCompletion(true) ? 0 : 1);
+		}
+	}
 }

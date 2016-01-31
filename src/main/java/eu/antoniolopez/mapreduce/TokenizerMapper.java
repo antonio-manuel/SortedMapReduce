@@ -14,9 +14,9 @@ public class TokenizerMapper  extends Mapper<Object, Text, Text, IntWritable>{
 
     public void map(Object key, Text value, Context context
                     ) throws IOException, InterruptedException {
-      StringTokenizer itr = new StringTokenizer(value.toString());
-      while (itr.hasMoreTokens()) {
-        word.set(itr.nextToken().replaceAll("[^\\p{L}\\p{Nd}]+", "").trim().toLowerCase());
+      StringTokenizer st = new StringTokenizer(value.toString());
+      while (st.hasMoreTokens()) {
+        word.set(st.nextToken().replaceAll("[^\\p{L}\\p{Nd}]+", "").trim().toLowerCase());
         if(word.getLength()>0){
         	context.write(word, one);
         }
