@@ -1,5 +1,7 @@
 package eu.antoniolopez.mapreduce;
 
+import java.io.File;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -37,7 +39,9 @@ public class SortedWordCount {
 			jobCount.setOutputValueClass(IntWritable.class);
 			FileInputFormat.addInputPath(jobCount, new Path(args[1]));
 			FileOutputFormat.setOutputPath(jobCount, new Path(args[2]));
-			if(jobCount.waitForCompletion(true)){
+			boolean success = jobCount.waitForCompletion(true);
+			FileHandler.deleteFolder(new File(args[1]));
+			if(success){				
 				Job jobOrder = Job.getInstance(conf, "word count");
 				jobOrder.setJarByClass(SortedWordCount.class);
 				jobOrder.setMapperClass(NumberMapper.class);
@@ -48,10 +52,10 @@ public class SortedWordCount {
 				jobOrder.setSortComparatorClass(LongWritable.DecreasingComparator.class);
 				FileInputFormat.addInputPath(jobOrder, new Path(args[2]));
 				FileOutputFormat.setOutputPath(jobOrder, new Path(args[3]));
-				System.exit(jobOrder.waitForCompletion(true) ? 0 : 1);
-			}else{
-				System.exit(1);
+				success = jobOrder.waitForCompletion(true);
+				FileHandler.deleteFolder(new File(args[2]));
 			}
+			System.exit(success ? 0 : 1);			
 		}
 	}
 }
