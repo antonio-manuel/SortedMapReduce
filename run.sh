@@ -37,4 +37,8 @@ done
 docker exec -it master ./start-hadoop.sh
 
 #copy jar to container
-docker exec -it master hadoop jar ./SortedWordCounter.jar eu.antoniolopez.mapreduce.SortedWordCount http://www.gutenberg.org/ebooks/2600.txt.utf-8 input1 output1 output2
+docker cp SortedWordCounter.jar master:/root/SortedWordCounter.jar
+
+echo "Execute this command: hadoop jar ./SortedWordCounter.jar eu.antoniolopez.mapreduce.SortedWordCount http://www.gutenberg.org/ebooks/2600.txt.utf-8 ftp://<user>:<password>@<host>/<path+filename>;type=i
+
+docker exec -it master bash

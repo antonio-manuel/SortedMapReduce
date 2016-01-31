@@ -20,9 +20,15 @@ import eu.antoniolopez.mapreduce.reducer.RepeatReducer;
 
 public class SortedWordCount {
 
+	private static final String INPUT_FOLDER = "swc_input";
+	private static final String OUTPUT_FOLDER_COUNT = "swc_output_count";
+	private static final String OUTPUT_FOLDER_SORT = "swc_output_sort";
+	
+	private static final String OUTPUT_FILE = "part-r-00000";
+	
 	public static void main(String[] args) throws Exception {
 
-		String file = FileHandler.copyFile(args[0], args[1]);
+		String file = FileHandler.copyFile(args[0], INPUT_FOLDER);
 		if(file!=null){
 			if(FileHandler.isZip(file)){
 				Unziper.unzip(file);
@@ -36,11 +42,11 @@ public class SortedWordCount {
 			jobCount.setReducerClass(IntSumReducer.class);
 			jobCount.setOutputKeyClass(Text.class);
 			jobCount.setOutputValueClass(IntWritable.class);
-			FileInputFormat.addInputPath(jobCount, new Path(args[1]));
-			FileOutputFormat.setOutputPath(jobCount, new Path(args[2]));
+			FileInputFormat.addInputPath(jobCount, new Path(INPUT_FOLDER));
+			FileOutputFormat.setOutputPath(jobCount, new Path(OUTPUT_FOLDER_COUNT));
 			boolean success = jobCount.waitForCompletion(true);
 			FileSystem fs = FileSystem.get(conf);
-			fs.delete(new Path(args[1]), true);
+			fs.delete(new Path(INPUT_FOLDER), true);
 			if(success){				
 				Job jobOrder = Job.getInstance(conf, "word count");
 				jobOrder.setJarByClass(SortedWordCount.class);
@@ -50,10 +56,13 @@ public class SortedWordCount {
 				jobOrder.setOutputKeyClass(LongWritable.class);
 				jobOrder.setOutputValueClass(Text.class);
 				jobOrder.setSortComparatorClass(LongWritable.DecreasingComparator.class);
-				FileInputFormat.addInputPath(jobOrder, new Path(args[2]));
-				FileOutputFormat.setOutputPath(jobOrder, new Path(args[3]));
+				FileInputFormat.addInputPath(jobOrder, new Path(OUTPUT_FOLDER_COUNT));
+				FileOutputFormat.setOutputPath(jobOrder, new Path(OUTPUT_FOLDER_SORT));
 				success = jobOrder.waitForCompletion(true);
-				fs.delete(new Path(args[2]), true);
+				fs.delete(new Path(OUTPUT_FOLDER_COUNT), true);
+				System.out.println(OUTPUT_FOLDER_SORT+System.getProperty("file.separator")+OUTPUT_FILE);
+				FileHandler.uploadFile(OUTPUT_FOLDER_SORT+System.getProperty("file.separator")+OUTPUT_FILE, args[1]);
+				fs.delete(new Path(OUTPUT_FOLDER_SORT), true);
 			}
 			System.exit(success ? 0 : 1);			
 		}

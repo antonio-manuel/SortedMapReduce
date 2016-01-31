@@ -1,9 +1,9 @@
 package eu.antoniolopez.mapreduce.io;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -14,18 +14,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 
 public class FileHandler {
 
-	private static String ZIP_EXTENSION = "zip";
-	private static int BUFFER = 64*1024;
+	private static final String ZIP_EXTENSION = "zip";
+	private static final int BUFFER = 64*1024;
+	private static final int BUFFER_FTP = 4*1024;
+	private static final String REGEXP_CHARS_NUMS = "[^\\p{L}\\p{Nd}]+";
 	
 	private static String getfileName(String URL){
 		int position = 0;
-		Pattern pattern = Pattern.compile("[^\\p{L}\\p{Nd}]+");
+		Pattern pattern = Pattern.compile(REGEXP_CHARS_NUMS);
 	    Matcher matcher = pattern.matcher(URL.substring(0,URL.lastIndexOf(".")));
 	    while (matcher.find()) {
 	        position = matcher.end();
@@ -49,25 +52,6 @@ public class FileHandler {
 		}
 		return is;
 	}
-	
-	public static void deleteFolder(File file) throws IOException{
-    	if(file.isDirectory()){
-    		if(file.list().length==0){    			
-    		   file.delete();
-    		}else{
-        	   String files[] = file.list();     
-        	   for (String temp : files) {
-        	      File fileDelete = new File(file, temp);
-        	      deleteFolder(fileDelete);
-        	   }
-        	   if(file.list().length==0){
-           	     file.delete();
-        	   }
-    		}    		
-    	}else{
-    		file.delete();
-    	}
-    }
 	
 	public static String copyFile(String url, String path){
 		String fileName = getfileName(url);
@@ -103,5 +87,30 @@ public class FileHandler {
 			exit = null;
 		}
 		return exit;
+	}
+	
+	public static void uploadFile(String file, String ftpUrl){
+
+		try {
+		    URL url = new URL(ftpUrl);
+		    URLConnection urlConn = url.openConnection();
+		    OutputStream os = urlConn.getOutputStream();
+		    
+		    Configuration conf = new Configuration();
+			FileSystem fs = FileSystem.get(conf);
+		    FSDataInputStream fis = fs.open(new Path(file));
+
+		    byte[] buffer = new byte[BUFFER_FTP];
+		    int bytesRead = -1;
+		    while ((bytesRead = fis.read(buffer)) != -1) {
+		    	os.write(buffer, 0, bytesRead);
+		    }
+
+		    fis.close();
+		    os.close();
+
+		} catch (IOException ex) {
+		    ex.printStackTrace();
+		}
 	}
 }

@@ -29,7 +29,10 @@ same than the original scripts but with some minimal modifications:
 
 1. Doesn't open a bash console with the master container.
 2. Copy a root jar file to master container
-3. Run hadoop with this jar and a sample book: "War and Peace" by Tolstoy.
+3. Run hadoop with this jar and a sample book: "War and Peace" by Tolstoy: http://www.gutenberg.org/ebooks/2600.txt.utf-8 (3.3MB)
+
+Also has been tested with: https://dumps.wikimedia.org/enwiki/20160113/enwiki-20160113-abstract1.xml 843.6 MB file.  
+
 
 
 ## Dependencies
