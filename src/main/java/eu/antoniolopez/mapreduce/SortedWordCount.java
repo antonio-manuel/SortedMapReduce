@@ -3,6 +3,7 @@ package eu.antoniolopez.mapreduce;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -12,6 +13,9 @@ import eu.antoniolopez.mapreduce.io.FileHandler;
 import eu.antoniolopez.mapreduce.io.Unziper;
 import eu.antoniolopez.mapreduce.mapper.TokenizerMapper;
 import eu.antoniolopez.mapreduce.reducer.IntSumReducer;
+
+import eu.antoniolopez.mapreduce.mapper.NumberMapper;
+import eu.antoniolopez.mapreduce.reducer.RepeatReducer;
 
 public class SortedWordCount {
 
@@ -24,16 +28,30 @@ public class SortedWordCount {
 			}
 
 			Configuration conf = new Configuration();
-			Job job = Job.getInstance(conf, "word count");
-			job.setJarByClass(SortedWordCount.class);
-			job.setMapperClass(TokenizerMapper.class);
-			job.setCombinerClass(IntSumReducer.class);
-			job.setReducerClass(IntSumReducer.class);
-			job.setOutputKeyClass(Text.class);
-			job.setOutputValueClass(IntWritable.class);
-			FileInputFormat.addInputPath(job, new Path(args[1]));
-			FileOutputFormat.setOutputPath(job, new Path(args[2]));
-			System.exit(job.waitForCompletion(true) ? 0 : 1);
+			Job jobCount = Job.getInstance(conf, "word count");
+			jobCount.setJarByClass(SortedWordCount.class);
+			jobCount.setMapperClass(TokenizerMapper.class);
+			jobCount.setCombinerClass(IntSumReducer.class);
+			jobCount.setReducerClass(IntSumReducer.class);
+			jobCount.setOutputKeyClass(Text.class);
+			jobCount.setOutputValueClass(IntWritable.class);
+			FileInputFormat.addInputPath(jobCount, new Path(args[1]));
+			FileOutputFormat.setOutputPath(jobCount, new Path(args[2]));
+			if(jobCount.waitForCompletion(true)){
+				Job jobOrder = Job.getInstance(conf, "word count");
+				jobOrder.setJarByClass(SortedWordCount.class);
+				jobOrder.setMapperClass(NumberMapper.class);
+				jobOrder.setCombinerClass(RepeatReducer.class);
+				jobOrder.setReducerClass(RepeatReducer.class);
+				jobOrder.setOutputKeyClass(LongWritable.class);
+				jobOrder.setOutputValueClass(Text.class);
+				jobOrder.setSortComparatorClass(LongWritable.DecreasingComparator.class);
+				FileInputFormat.addInputPath(jobOrder, new Path(args[2]));
+				FileOutputFormat.setOutputPath(jobOrder, new Path(args[3]));
+				System.exit(jobOrder.waitForCompletion(true) ? 0 : 1);
+			}else{
+				System.exit(1);
+			}
 		}
 	}
 }
