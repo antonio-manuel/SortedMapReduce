@@ -8,6 +8,11 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
+import eu.antoniolopez.mapreduce.io.FileHandler;
+import eu.antoniolopez.mapreduce.io.Unziper;
+import eu.antoniolopez.mapreduce.mapper.TokenizerMapper;
+import eu.antoniolopez.mapreduce.reducer.IntSumReducer;
+
 public class SortedWordCount {
 
 	public static void main(String[] args) throws Exception {

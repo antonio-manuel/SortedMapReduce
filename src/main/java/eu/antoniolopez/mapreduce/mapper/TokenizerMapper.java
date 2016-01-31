@@ -1,4 +1,4 @@
-package eu.antoniolopez.mapreduce;
+package eu.antoniolopez.mapreduce.mapper;
 
 import java.io.IOException;
 import java.util.StringTokenizer;

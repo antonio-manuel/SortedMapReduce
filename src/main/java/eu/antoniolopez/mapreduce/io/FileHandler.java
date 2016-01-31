@@ -1,4 +1,4 @@
-package eu.antoniolopez.mapreduce;
+package eu.antoniolopez.mapreduce.io;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
@@ -39,7 +40,8 @@ public class FileHandler {
 		if(aURL.getProtocol().equals("file")){
 			is = Files.newInputStream(Paths.get(URI.create(url)));
 		}else{
-			is = aURL.openStream();
+			URLConnection urlc = aURL.openConnection();
+			is = urlc.getInputStream();
 		}
 		return is;
 	}

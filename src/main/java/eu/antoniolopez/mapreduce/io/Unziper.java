@@ -1,4 +1,4 @@
-package eu.antoniolopez.mapreduce;
+package eu.antoniolopez.mapreduce.io;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

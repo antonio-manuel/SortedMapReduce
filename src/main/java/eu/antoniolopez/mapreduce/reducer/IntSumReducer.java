@@ -1,4 +1,4 @@
-package eu.antoniolopez.mapreduce;
+package eu.antoniolopez.mapreduce.reducer;
 
 import java.io.IOException;
 

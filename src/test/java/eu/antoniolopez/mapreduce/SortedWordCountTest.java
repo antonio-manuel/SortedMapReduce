@@ -14,8 +14,8 @@ import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
 import org.junit.Before;
 import org.junit.Test;
 
-import eu.antoniolopez.mapreduce.IntSumReducer;
-import eu.antoniolopez.mapreduce.TokenizerMapper;
+import eu.antoniolopez.mapreduce.mapper.TokenizerMapper;
+import eu.antoniolopez.mapreduce.reducer.IntSumReducer;
 
 public class SortedWordCountTest {
 
