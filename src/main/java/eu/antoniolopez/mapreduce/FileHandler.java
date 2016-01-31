@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 public class FileHandler {
 
 	private static String ZIP_EXTENSION = "zip";
-	private final static int BUFFER = 64*1024;
 	
 	private static String getfileName(String URL){
 		int position = 0;
