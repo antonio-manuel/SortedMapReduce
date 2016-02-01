@@ -9,7 +9,7 @@ folder, defined by parameters, as well.
 The remote file to be processed, can be just a single plain text file or a zip file with many files
 inside, both works the same way.
 
-Libraries like Apache FileUtils and other utilites has been ommited in order to developer with the basis,
+Libraries like Apache FileUtils, SDK to store/receive data from Amazon S3 and other utilites has been ommited in order to develop with the basis,
 the code has been compiled with Java 7 because of the docker containers configuration.
 
 First it was tried to use maven to handle dependencies, but because of problems with some libraries, I 
