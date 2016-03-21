@@ -4,7 +4,7 @@
 
 This application allows to execute WordCount from a remote file, passing the URL as an execution 
 parameter. After counting words, it orders by descending frequency order and store it in a remote FTP 
-folder, defined by parameters, as well.
+folder, defined by parameters, as well. It all works on docker containers which contains a hadoop cluster configuration with 1 master and 2 slaves.
 
 The remote file to be processed, can be just a single plain text file or a zip file with many files
 inside, both works the same way.
